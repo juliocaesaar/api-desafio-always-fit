@@ -5,22 +5,23 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Services\StatisticsService;
 
 class StatisticsController extends Controller
 {
+    protected $statisticsService;
+
+    public function __construct(StatisticsService $statisticsService)
+    {
+        $this->statisticsService = $statisticsService;
+    }
+
     /**
      * Get user statistics
      */
     public function index()
     {
-        $user = Auth::user();
-
-        $statistics = [
-            'trainings_count' => $user->trainings()->count(),
-            'nutrition_plans_count' => $user->nutritionPlans()->count(),
-            'progress_logs_count' => $user->progressLogs()->count(),
-        ];
-
-        return response()->json($statistics);
+        $result = $this->statisticsService->getUserStatistics();
+        return response()->json($result);
     }
 } 
