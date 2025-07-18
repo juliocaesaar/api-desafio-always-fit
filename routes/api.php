@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\NutritionPlanController;
 use App\Http\Controllers\Api\ProgressLogController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\StatisticsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [UserController::class, 'me']);
     Route::put('/user/{id}', [UserController::class, 'update']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/statistics', [StatisticsController::class, 'index']);
     Route::apiResource('trainings', TrainingController::class);
     Route::apiResource('nutrition-plans', NutritionPlanController::class);
     Route::apiResource('progress-logs', ProgressLogController::class);
