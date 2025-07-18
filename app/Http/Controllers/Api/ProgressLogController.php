@@ -7,15 +7,23 @@ use Illuminate\Http\Request;
 use App\Models\ProgressLog;
 use App\Http\Requests\StoreProgressLogRequest;
 use App\Http\Requests\UpdateProgressLogRequest;
+use App\Services\ProgressLogService;
 
 class ProgressLogController extends Controller
 {
+    protected $progressLogService;
+
+    public function __construct(ProgressLogService $progressLogService)
+    {
+        $this->progressLogService = $progressLogService;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $progressLogs = ProgressLog::all();
+        $progressLogs = $this->progressLogService->getAll();
         return response()->json($progressLogs);
     }
 
@@ -33,8 +41,8 @@ class ProgressLogController extends Controller
     public function store(StoreProgressLogRequest $request)
     {
         $data = $request->validated();
-        $progressLog = ProgressLog::create($data);
-        return response()->json($progressLog, 201);
+        $progressLog = $this->progressLogService->create($data);
+        return response()->json(['message' => 'Progress log created successfully', 'progress_log' => $progressLog], 201);
     }
 
     /**
@@ -42,8 +50,8 @@ class ProgressLogController extends Controller
      */
     public function show(string $id)
     {
-        $progressLog = ProgressLog::findOrFail($id);
-        return response()->json($progressLog);
+        $progressLog = $this->progressLogService->getById($id);
+        return response()->json(['message' => 'Progress log found successfully', 'progress_log' => $progressLog], 200);
     }
 
     /**
@@ -59,9 +67,8 @@ class ProgressLogController extends Controller
      */
     public function update(UpdateProgressLogRequest $request, string $id)
     {
-        $progressLog = ProgressLog::findOrFail($id);
-        $progressLog->update($request->validated());
-        return response()->json($progressLog);
+        $progressLog = $this->progressLogService->update($id, $request->validated());
+        return response()->json(['message' => 'Progress log updated successfully', 'progress_log' => $progressLog], 200);
     }
 
     /**
@@ -69,6 +76,7 @@ class ProgressLogController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $result = $this->progressLogService->delete($id);
+        return response()->json($result);
     }
 }

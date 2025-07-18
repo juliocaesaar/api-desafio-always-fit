@@ -7,15 +7,23 @@ use Illuminate\Http\Request;
 use App\Models\NutritionPlan;
 use App\Http\Requests\StoreNutritionPlanRequest;
 use App\Http\Requests\UpdateNutritionPlanRequest;
+use App\Services\NutritionPlanService;
 
 class NutritionPlanController extends Controller
 {
+    protected $nutritionPlanService;
+
+    public function __construct(NutritionPlanService $nutritionPlanService)
+    {
+        $this->nutritionPlanService = $nutritionPlanService;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $nutritionPlans = NutritionPlan::all();
+        $nutritionPlans = $this->nutritionPlanService->getAll();
         return response()->json($nutritionPlans);
     }
 
@@ -33,8 +41,8 @@ class NutritionPlanController extends Controller
     public function store(StoreNutritionPlanRequest $request)
     {
         $data = $request->validated();
-        $nutritionPlan = NutritionPlan::create($data);
-        return response()->json($nutritionPlan, 201);
+        $nutritionPlan = $this->nutritionPlanService->create($data);
+        return response()->json(['message' => 'Nutrition plan created successfully', 'nutrition_plan' => $nutritionPlan], 201);
     }
 
     /**
@@ -42,8 +50,8 @@ class NutritionPlanController extends Controller
      */
     public function show(string $id)
     {
-        $nutritionPlan = NutritionPlan::findOrFail($id);
-        return response()->json($nutritionPlan);
+        $nutritionPlan = $this->nutritionPlanService->getById($id);
+        return response()->json(['message' => 'Nutrition plan found successfully', 'nutrition_plan' => $nutritionPlan], 200);
     }
 
     /**
@@ -59,9 +67,8 @@ class NutritionPlanController extends Controller
      */
     public function update(UpdateNutritionPlanRequest $request, string $id)
     {
-        $nutritionPlan = NutritionPlan::findOrFail($id);
-        $nutritionPlan->update($request->validated());
-        return response()->json($nutritionPlan);
+        $nutritionPlan = $this->nutritionPlanService->update($id, $request->validated());
+        return response()->json(['message' => 'Nutrition plan updated successfully', 'nutrition_plan' => $nutritionPlan], 200);
     }
 
     /**
@@ -69,6 +76,7 @@ class NutritionPlanController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $result = $this->nutritionPlanService->delete($id);
+        return response()->json($result);
     }
 }

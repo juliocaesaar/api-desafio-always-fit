@@ -7,15 +7,25 @@ use Illuminate\Http\Request;
 use App\Models\Training;
 use App\Http\Requests\StoreTrainingRequest;
 use App\Http\Requests\UpdateTrainingRequest;
+use App\Exceptions\TrainingNotFoundException;
+use App\Exceptions\UnauthorizedAccessException;
+use Illuminate\Support\Facades\Auth;
+use App\Services\TrainingService;
 
 class TrainingController extends Controller
 {
+    protected $trainingService;
+
+    public function __construct(TrainingService $trainingService)
+    {
+        $this->trainingService = $trainingService;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $trainings = Training::all();
+        $trainings = $this->trainingService->getAll();
         return response()->json($trainings);
     }
 
@@ -33,9 +43,8 @@ class TrainingController extends Controller
     public function store(StoreTrainingRequest $request)
     {
         $data = $request->validated();
-
-        $training = Training::create($data);
-        return response()->json($training, 201);
+        $training = $this->trainingService->create($data);
+        return response()->json(['message' => 'Training created successfully', 'training' => $training], 201);
     }
 
     /**
@@ -43,8 +52,8 @@ class TrainingController extends Controller
      */
     public function show(string $id)
     {
-        $training = Training::findOrFail($id);
-        return response()->json($training);
+        $training = $this->trainingService->getById($id);
+        return response()->json(['message' => 'Training found successfully', 'training' => $training], 200);
     }
 
     /**
@@ -60,9 +69,8 @@ class TrainingController extends Controller
      */
     public function update(UpdateTrainingRequest $request, string $id)
     {
-        $training = Training::findOrFail($id);
-        $training->update($request->validated());
-        return response()->json($training);
+        $training = $this->trainingService->update($id, $request->validated());
+        return response()->json(['message' => 'Training updated successfully', 'training' => $training], 200);
     }
 
     /**
@@ -70,6 +78,7 @@ class TrainingController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $result = $this->trainingService->delete($id);
+        return response()->json($result);
     }
 }

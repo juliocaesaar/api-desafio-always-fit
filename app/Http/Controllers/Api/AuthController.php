@@ -30,16 +30,13 @@ class AuthController extends Controller
     {
         $data = $request->validated();
         $result = $this->authService->login($data);
-        if (!$result) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
-        }
         return response()->json($result);
     }
 
     public function logout(Request $request)
     {
-        $this->authService->logout($request);
-        return response()->json(['message' => 'Logged out successfully']);
+        $result = $this->authService->logout($request);
+        return response()->json($result);
     }
 
     public function refreshToken(Request $request)
