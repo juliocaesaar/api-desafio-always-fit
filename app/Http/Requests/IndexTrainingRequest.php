@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateTrainingRequest extends FormRequest
+class IndexTrainingRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,12 +22,9 @@ class UpdateTrainingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'string|max:255',
-            'description' => 'nullable|string',
-            'level' => 'in:iniciante,intermediário,avançado',
-            'duration_minutes' => 'integer',
-            'category' => 'string|max:255',
-            'finished' => 'boolean',
+            'finished' => 'nullable|boolean',
+            'category' => 'nullable|string|max:255',
+            'level' => 'nullable|in:iniciante,intermediário,avançado',
         ];
     }
 }

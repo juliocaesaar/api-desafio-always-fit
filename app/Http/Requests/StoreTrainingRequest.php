@@ -22,12 +22,12 @@ class StoreTrainingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|string',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'level' => 'required|in:iniciante,intermediário,avançado',
             'duration_minutes' => 'required|integer',
-            'exercises' => 'required|array',
+            'category' => 'required|string|max:255',
+            'finished' => 'boolean',
         ];
     }
 }

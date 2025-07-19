@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Training;
 use App\Http\Requests\StoreTrainingRequest;
 use App\Http\Requests\UpdateTrainingRequest;
+use App\Http\Requests\IndexTrainingRequest;
 use App\Exceptions\TrainingNotFoundException;
 use App\Exceptions\UnauthorizedAccessException;
 use Illuminate\Support\Facades\Auth;
@@ -23,9 +24,10 @@ class TrainingController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(IndexTrainingRequest $request)
     {
-        $trainings = $this->trainingService->getAll();
+        $filters = $request->validated();
+        $trainings = $this->trainingService->getAll($filters);
         return response()->json($trainings);
     }
 

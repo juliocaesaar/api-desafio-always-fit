@@ -16,27 +16,31 @@ class Training extends Model
         'image_url',
         'level',
         'duration_minutes',
-        'exercises',
-        'is_active'
+        'category',
+        'finished'
     ];
 
     protected $casts = [
-        'exercises' => 'array',
-        'is_active' => 'boolean'
+        'finished' => 'boolean'
     ];
 
-    public function progressLogs()
+    public function progressLog()
     {
-        return $this->hasMany(ProgressLog::class);
+        return $this->hasOne(ProgressLog::class);
     }
 
-    public function scopeActive($query)
+    public function scopeFinished($query)
     {
-        return $query->where('is_active', true);
+        return $query->where('finished', true);
     }
 
     public function scopeByLevel($query, $level)
     {
         return $query->where('level', $level);
+    }
+
+    public function scopeByCategory($query, $category)
+    {
+        return $query->where('category', $category);
     }
 }

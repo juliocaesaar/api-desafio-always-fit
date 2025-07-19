@@ -10,11 +10,26 @@ use Illuminate\Support\Facades\Auth;
 
 class TrainingService
 {
-    public function getAll()
+    public function getAll(array $filters = [])
     {
         try {
             $user = Auth::user();
-            return $user->trainings;
+            $query = $user->trainings();
+
+            if (isset($filters['finished'])) {
+                $finished = filter_var($filters['finished'], FILTER_VALIDATE_BOOLEAN);
+                $query->where('finished', $finished);
+            }
+
+            if (isset($filters['category'])) {
+                $query->where('category', $filters['category']);
+            }
+
+            if (isset($filters['level'])) {
+                $query->where('level', $filters['level']);
+            }
+
+            return $query->get();
         } catch (\Exception $e) {
             Log::error('Error getting all trainings: ' . $e->getMessage());
             throw new TrainingNotFoundException($e->getMessage());
